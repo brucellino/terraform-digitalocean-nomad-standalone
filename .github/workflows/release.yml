@@ -1,0 +1,54 @@
+name: main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  validate:
+    strategy:
+      matrix:
+        example:
+          - simple
+    name: validate
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: 'actions/checkout@v2'
+        with:
+          fetch-depth: 0
+      - name: Get Terraform
+        run: |
+          curl -fSL https://releases.hashicorp.com/terraform/1.2.3/terraform_1.2.3_linux_amd64.zip \
+          | gunzip -> terraform ; chmod u+x terraform
+      - name: Init terraform
+        run: ./terraform -chdir=examples/${{ matrix.example }} init
+      - name: Validate terraform
+        run: ./terraform -chdir=examples/${{ matrix.example }} validate
+  release:
+    needs:
+      - validate
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/*'
+      - name: Install dependencies
+        run: |
+          npm install -D '@semantic-release/commit-analyzer' \
+          '@semantic-release/release-notes-generator' \
+          '@semantic-release/changelog' \
+          'semantic-release-license' \
+          '@semantic-release/github'
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

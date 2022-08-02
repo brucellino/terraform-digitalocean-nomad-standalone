@@ -1,0 +1,12 @@
+branches:
+  - main
+plugins:
+  - '@semantic-release/commit-analyzer'
+  - '@semantic-release/release-notes-generator'
+  - '@semantic-release/changelog'
+  - 'semantic-release-license'
+  - - '@semantic-release/git':
+      assets:
+        - README.md
+        - CHANGELOG.md
+  - '@semantic-release/github'
