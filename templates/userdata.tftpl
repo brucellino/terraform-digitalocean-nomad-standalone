@@ -47,7 +47,7 @@ write_files:
       ui {
         enabled = true
       }
-      data_dir = "/nomad/"
+      data_dir = "/opt/nomad/"
       log_level = "INFO"
       bind_addr = "0.0.0.0"
       advertise {
@@ -74,7 +74,6 @@ write_files:
       ConditionFileNotEmpty=/usr/local/bin/nomad
 
       [Service]
-      Type=notify
       User=root
       Group=root
       ExecStart=/usr/local/bin/nomad agent -config=/etc/nomad.d/
@@ -83,7 +82,9 @@ write_files:
       KillSignal=SIGTERM
       Restart=on-failure
       RestartSec=2
+      StartLimitBurst=3
       LimitNOFILE=65536
+      LimitNPROC=infinity
       StandardOutput=append:/var/log/nomad.log
       AmbientCapabilities=CAP_NET_BIND_SERVICE
       TasksMax=infinity
