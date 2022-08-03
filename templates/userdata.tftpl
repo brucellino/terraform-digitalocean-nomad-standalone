@@ -1,0 +1,102 @@
+#cloud-config
+manage_etc_hosts: false
+manage_resolv_conf: true
+mounts:
+   - [ /dev/disk/by-id/scsi-0DO_Volume_nomad-data-${count}, /nomad, ext4, "discard,defaults,noatime" ]
+users:
+  - name: ${username}
+    ssh-authorized-keys:
+      - ${ssh_pub_key}
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+packages:
+  - curl
+  - jq
+  - net-tools
+manage-resolv-conf: true
+resolv_conf:
+  nameservers:
+    - '1.1.1.1'
+  searchdomains:
+    - ${domain}
+    - ${project}
+  domain: ${domain}
+
+write_files:
+  - path: /etc/nomad.d/nomad.hcl
+    content: |
+      datacenter = "${datacenter}"
+      %{if server }
+      server {
+        enabled = true
+        bootstrap_expect = ${servers}
+        search {
+          fuzzy_enabled   = true
+          limit_query     = 200
+          limit_results   = 1000
+          min_term_length = 5
+        }
+        server_join {
+          retry_join = ["provider=digitalocean region=${region} tag_name=${tag} api_token=${join_token}"]
+        }
+      }
+      %{endif}
+      client {
+        enabled = true
+      }
+      ui {
+        enabled = true
+      }
+      data_dir = "/nomad/"
+      log_level = "INFO"
+      bind_addr = "0.0.0.0"
+      advertise {
+        http = "{{ GetInterfaceIP \"eth1\" }}"
+        rpc = "{{ GetInterfaceIP \"eth1\" }}"
+        serf = "{{ GetInterfaceIP \"eth1\" }}"
+      }
+
+      plugin "raw_exec" {
+        config {
+          enabled = true
+        }
+      }
+
+  - path: /usr/lib/systemd/system/nomad.service
+    content: |
+      [Unit]
+      Description="HashiCorp nomad"
+      Documentation=https://www.nomadproject.io/docs
+      Wants=network-online.target
+      After=cloud-init.target
+      Requires=cloud-init.target
+      ConditionFileNotEmpty=/etc/nomad.d/nomad.hcl
+      ConditionFileNotEmpty=/usr/local/bin/nomad
+
+      [Service]
+      Type=notify
+      User=root
+      Group=root
+      ExecStart=/usr/local/bin/nomad agent -config=/etc/nomad.d/
+      ExecReload=/bin/kill --signal HUP $MAINPID
+      KillMode=process
+      KillSignal=SIGTERM
+      Restart=on-failure
+      RestartSec=2
+      LimitNOFILE=65536
+      StandardOutput=append:/var/log/nomad.log
+      AmbientCapabilities=CAP_NET_BIND_SERVICE
+      TasksMax=infinity
+      OOMScoreAdjust=-1000
+
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  - sed -r 's/^.*nomad-.*$//' /etc/hosts
+  - |
+    curl -fL https://releases.hashicorp.com/nomad/${nomad_version}/nomad_${nomad_version}_linux_amd64.zip \
+    | gunzip -> /usr/local/bin/nomad
+  - chmod a+x  /usr/local/bin/nomad
+  - nomad -version
+  - systemctl daemon-reload
+  - systemctl enable nomad
