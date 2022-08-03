@@ -30,7 +30,7 @@ module "vpc" {
   source     = "brucellino/vpc/digitalocean"
   version    = "1.0.0"
   vpc_name   = "nomad"
-  vpc_region = "ams2"
+  vpc_region = "ams3"
   project = {
     description = "Nomad Project"
     environment = "development"
@@ -39,9 +39,10 @@ module "vpc" {
   }
 }
 
-module "example" {
+module "nomad" {
   depends_on   = [module.vpc]
   source       = "../../"
   vpc_name     = "nomad"
   project_name = "NomadTest"
+  servers      = 1
 }
