@@ -1,21 +1,48 @@
-# This is the default example
-# customise it as you see fit for your example usage of your module
+terraform {
+  required_providers {
+    vault = {
+      source  = "hashicorp/vault"
+      version = "3.8.0"
+    }
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "2.21.0"
+    }
+  }
+  backend "consul" {
+    path = "terraform/modules/tfmod-digitalocean-nomad-standalone"
+  }
+}
 
-# add provider configurations here, for example:
-# provider "aws" {
-#
-# }
+provider "vault" {
+  # Configuration options
+}
 
-# Declare your backends and other terraform configuration here
-# This is an example for using the consul backend.
-# terraform {
-#   backend "consul" {
-#     path = "test_module/simple"
-#   }
-# }
+data "vault_generic_secret" "do" {
+  path = "kv/do"
+}
 
+provider "digitalocean" {
+  token = data.vault_generic_secret.do.data["token"]
+}
 
-module "example" {
-  source = "../../"
-  dummy  = "test"
+module "vpc" {
+  source     = "brucellino/vpc/digitalocean"
+  version    = "1.0.0"
+  vpc_name   = "nomad"
+  vpc_region = "ams3"
+  project = {
+    description = "Nomad Project"
+    environment = "development"
+    name        = "NomadTest"
+    purpose     = "Testing Nomad Standalone"
+  }
+}
+
+module "nomad" {
+  depends_on   = [module.vpc]
+  source       = "../../"
+  vpc_name     = "nomad"
+  project_name = "NomadTest"
+  servers      = 1
 }
