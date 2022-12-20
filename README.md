@@ -2,7 +2,12 @@
 
 # Terraform Digitalocean Nomad standalone
 
-This module deploys Nomad in standalone (no Consul or Vault) on DigitalOcean droplets.
+This module deploys a Nomad cluster in standalone (no Consul or Vault) on DigitalOcean droplets.
+
+The servers and agents are created separately.
+Servers are added to a loadbalancer, while clients are kept behind it.
+
+This module provisions resources _up to_ the Nomad API; for other resources (Nomad CSI volumes, Nomad jobs, Nomad configuration, _etc_, use a different module)
 
 ## Examples
 
