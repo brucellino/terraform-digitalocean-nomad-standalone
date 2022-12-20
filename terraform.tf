@@ -3,12 +3,12 @@ terraform {
   required_providers {
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "2.21.0"
+      version = ">=2.21.0"
     }
 
     tailscale = {
       source  = "tailscale/tailscale"
-      version = "0.13.6"
+      version = ">=0.13.6"
     }
   }
 }
