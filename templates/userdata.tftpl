@@ -18,9 +18,7 @@ resolv_conf:
   nameservers:
     - '1.1.1.1'
   searchdomains:
-    - ${domain}
     - ${project}
-  domain: ${domain}
 
 write_files:
   - path: /etc/nomad.d/nomad.hcl

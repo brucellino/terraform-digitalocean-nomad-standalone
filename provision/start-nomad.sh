@@ -8,6 +8,6 @@ while [[ ! $(exec systemctl list-unit-files | grep nomad) ]] ; do
   echo "waiting for nomad service to be available"
   sleep 10
 done
-service nomad start
+service nomad start || sleep 10 ; service nomad start
 echo "waiting for servers to stabilise"
 sleep 20
