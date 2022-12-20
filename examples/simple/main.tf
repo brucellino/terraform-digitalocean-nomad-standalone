@@ -58,10 +58,12 @@ module "nomad" {
   depends_on          = [module.vpc]
   source              = "../../"
   vpc_name            = "nomad"
+  nomad_version       = "1.4.3"
   project_name        = "NomadTest"
   servers             = 3
-  ssh_allowed_cidrs   = ["130.25.160.46"]
+  agents              = 4
   bastion_device_name = "wide"
+  tailnet_name        = var.tailnet_name
 }
 
 output "server_ips" {
@@ -73,5 +75,5 @@ output "lb_ip" {
 }
 
 output "price" {
-  value = module.nomad.droplet_cost
+  value = "Cost: ${sum([module.nomad.server_cost, module.nomad.agent_cost])} USD per month"
 }

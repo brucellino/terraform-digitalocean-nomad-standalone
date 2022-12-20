@@ -15,7 +15,12 @@ output "lb_ip" {
   value       = digitalocean_loadbalancer.external.ip
 }
 
-output "droplet_cost" {
-  description = "Monthly cost of the droplets"
-  value       = "Cost: ${sum(digitalocean_droplet.server[*].price_monthly)} USD per month"
+output "server_cost" {
+  description = "Monthly cost of the servers"
+  value       = sum(digitalocean_droplet.server[*].price_monthly)
+}
+
+output "agent_cost" {
+  description = "Monthly cost of the agents"
+  value       = sum(digitalocean_droplet.client[*].price_monthly)
 }
