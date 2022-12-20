@@ -18,6 +18,14 @@ data "http" "ssh_key" {
   url = var.ssh_public_key_url
 }
 
+data "tailscale_device" "bastion" {
+  name = var.bastion_device_name
+}
+
+resource "digitalocean_tag" "nomad" {
+  name = "nomad"
+}
+
 resource "digitalocean_ssh_key" "nomad" {
   name       = "Nomad servers ssh key"
   public_key = data.http.ssh_key.response_body
@@ -29,15 +37,37 @@ resource "digitalocean_ssh_key" "nomad" {
   }
 }
 
-# data "http" "nomad_health" {
-#   url = join("", ["http://", digitalocean_loadbalancer.external.ip, "/v1/status/leader"])
-#   lifecycle {
-#     postcondition {
-#       condition     = contains([201, 200, 204], self.status_code)
-#       error_message = "Nomad has no leader. Service not healthy"
-#     }
-#   }
-# }
+data "http" "nomad_server_health" {
+  url = join("", ["http://", digitalocean_loadbalancer.external.ip, "/"])
+  lifecycle {
+    postcondition {
+      condition     = contains([201, 200, 204, 503], self.status_code)
+      error_message = "Nomad has no leader. Service not healthy"
+    }
+  }
+}
+
+resource "digitalocean_loadbalancer" "external" {
+  name     = "nomad-external"
+  region   = data.digitalocean_vpc.selected.region
+  vpc_uuid = data.digitalocean_vpc.selected.id
+
+  forwarding_rule {
+    entry_port  = 80
+    target_port = var.nomad_ports.api.port
+    #tfsec:ignore:digitalocean-compute-enforce-https
+    entry_protocol  = "http"
+    target_protocol = "http"
+  }
+
+  healthcheck {
+    protocol = "http"
+    port     = var.nomad_ports.api.port
+    path     = "/ui"
+  }
+
+  droplet_tag = "nomad-server"
+}
 
 resource "digitalocean_droplet" "server" {
   count         = var.servers
@@ -61,33 +91,65 @@ resource "digitalocean_droplet" "server" {
       username      = var.username
       datacenter    = var.datacenter
       servers       = var.servers
-      ssh_pub_key   = data.http.ssh_key.body
+      ssh_pub_key   = data.http.ssh_key.response_body
       tag           = "nomad-server"
       region        = data.digitalocean_vpc.selected.region
       join_token    = data.vault_generic_secret.join_token.data["autojoin_token"]
-      domain        = digitalocean_domain.cluster.name
       project       = data.digitalocean_project.p.name
       count         = count.index
     }
   )
-  # connection {
-  #   type = "ssh"
-  #   user = "root"
-  #   host = self.ipv4_address
-  # }
-  # provisioner "remote-exec" {
-  #   script = "${path.module}/provision/start-nomad.sh"
-  # }
-  # lifecycle {
-  #   postcondition {
-  #     condition     = contains([201, 200, 204], data.http.consul_health.status_code)
-  #     error_message = "Consul service is not healthy"
-  #   }
-  # }
+  connection {
+    type = "ssh"
+    user = "root"
+    host = self.ipv4_address
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/provision/start-nomad.sh"
+  }
+  lifecycle {
+    postcondition {
+      condition     = contains([201, 200, 204, 503], data.http.nomad_server_health.status_code)
+      error_message = "Nomad service is not healthy"
+    }
+  }
 }
 
-resource "digitalocean_domain" "cluster" {
-  name = "hashi.local"
+resource "digitalocean_firewall" "nomad" {
+  for_each = var.nomad_ports
+  name     = "nomad-${each.key}"
+  droplet_ids = concat(
+    digitalocean_droplet.server[*].id
+  )
+  tags = [digitalocean_tag.nomad.name, "nomad-server"]
+  inbound_rule {
+    protocol   = each.value.protocol
+    port_range = each.value.port
+    # source_tags      = ["nomad-server"]
+    source_addresses = digitalocean_droplet.server[*].ipv4_address_private
+  }
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = [data.tailscale_device.bastion.addresses]
+  }
+}
+
+resource "digitalocean_firewall" "ssh" {
+  name        = "ssh"
+  tags        = [digitalocean_tag.nomad.name]
+  droplet_ids = concat(digitalocean_droplet.server[*].id)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "22"
+    source_addresses = [data.tailscale_device.bastion.addresses]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = [data.tailscale_device.bastion.addresses]
+  }
 }
 
 resource "digitalocean_volume" "nomad_data" {
@@ -97,4 +159,5 @@ resource "digitalocean_volume" "nomad_data" {
   size                    = "1"
   initial_filesystem_type = "ext4"
   description             = "Persistent data for Nomad server ${count.index}"
+  tags                    = [digitalocean_tag.nomad.name]
 }

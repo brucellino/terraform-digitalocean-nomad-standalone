@@ -46,11 +46,28 @@ variable "agents" {
 }
 
 variable "nomad_ports" {
-  type        = map(number)
+  type = map(
+    object(
+      {
+        port     = number
+        protocol = string
+      }
+    )
+  )
   description = "Map of port names and numbers to assign on the firewall"
   default = {
-    api = 4646
-    rpc = 4647
+    api = {
+      port     = 4646
+      protocol = "tcp"
+    },
+    rpc = {
+      port     = 4647
+      protocol = "tcp"
+    }
+    serf = {
+      port     = 4648
+      protocol = "tcp"
+    }
   }
 }
 
@@ -89,5 +106,22 @@ variable "server_size" {
 variable "username" {
   description = "Name of sudo user for ssh access"
   default     = "hashiuser"
+  type        = string
+}
+
+variable "ssh_allowed_cidrs" {
+  type        = list(string)
+  description = "List of CIDRs that we allow ssh access from"
+
+  validation {
+    condition     = !contains(var.ssh_allowed_cidrs, "0.0.0.0/0")
+    error_message = "Do not allow SSH from the entire internet."
+  }
+
+}
+
+variable "bastion_device_name" {
+  description = "Name of the Tailscale device used as bastion to connect to the cluster"
+  sensitive   = false
   type        = string
 }
