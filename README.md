@@ -20,8 +20,8 @@ These examples show how to use the module in your project, and are also use for 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.2.0 |
-| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | 2.21.0 |
-| <a name="requirement_tailscale"></a> [tailscale](#requirement\_tailscale) | 0.13.6 |
+| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | >=2.21.0 |
+| <a name="requirement_tailscale"></a> [tailscale](#requirement\_tailscale) | >=0.13.6 |
 
 ## Providers
 
@@ -40,23 +40,23 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [digitalocean_droplet.client](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/droplet) | resource |
-| [digitalocean_droplet.server](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/droplet) | resource |
-| [digitalocean_firewall.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/firewall) | resource |
-| [digitalocean_firewall.ssh](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/firewall) | resource |
-| [digitalocean_loadbalancer.external](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/loadbalancer) | resource |
-| [digitalocean_project_resources.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/project_resources) | resource |
-| [digitalocean_ssh_key.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/ssh_key) | resource |
-| [digitalocean_tag.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/tag) | resource |
-| [digitalocean_tag.nomad_client](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/tag) | resource |
-| [digitalocean_tag.nomad_server](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/tag) | resource |
-| [digitalocean_volume.nomad_data](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/resources/volume) | resource |
-| [digitalocean_image.ubuntu](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/data-sources/image) | data source |
-| [digitalocean_project.p](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/data-sources/project) | data source |
-| [digitalocean_vpc.selected](https://registry.terraform.io/providers/digitalocean/digitalocean/2.21.0/docs/data-sources/vpc) | data source |
+| [digitalocean_droplet.client](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/droplet) | resource |
+| [digitalocean_droplet.server](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/droplet) | resource |
+| [digitalocean_firewall.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/firewall) | resource |
+| [digitalocean_firewall.ssh](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/firewall) | resource |
+| [digitalocean_loadbalancer.external](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/loadbalancer) | resource |
+| [digitalocean_project_resources.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/project_resources) | resource |
+| [digitalocean_ssh_key.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/ssh_key) | resource |
+| [digitalocean_tag.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/tag) | resource |
+| [digitalocean_tag.nomad_client](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/tag) | resource |
+| [digitalocean_tag.nomad_server](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/tag) | resource |
+| [digitalocean_volume.nomad_data](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/volume) | resource |
+| [digitalocean_image.ubuntu](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/image) | data source |
+| [digitalocean_project.p](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/project) | data source |
+| [digitalocean_vpc.selected](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/vpc) | data source |
 | [http_http.nomad_server_health](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [http_http.ssh_key](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
-| [tailscale_device.bastion](https://registry.terraform.io/providers/tailscale/tailscale/0.13.6/docs/data-sources/device) | data source |
+| [tailscale_device.bastion](https://registry.terraform.io/providers/tailscale/tailscale/latest/docs/data-sources/device) | data source |
 | [vault_generic_secret.join_token](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/generic_secret) | data source |
 
 ## Inputs
