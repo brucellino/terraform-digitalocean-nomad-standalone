@@ -25,7 +25,7 @@ repos:
       - id: terraform-docs-go
         args: ["markdown", "table", "--output-file", "README.md", "."]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.21.0
+    rev: 0.22.0
     hooks:
       - id: check-github-actions
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
