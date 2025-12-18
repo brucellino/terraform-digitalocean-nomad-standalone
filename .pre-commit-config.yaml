@@ -20,12 +20,12 @@ repos:
       - id: terraform_validate
       - id: terraform_tfsec
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.20.0
+    rev: v0.21.0
     hooks:
       - id: terraform-docs-go
         args: ["markdown", "table", "--output-file", "README.md", "."]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.35.0
+    rev: 0.36.0
     hooks:
       - id: check-github-actions
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
