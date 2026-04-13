@@ -18,7 +18,7 @@ These examples show how to use the module in your project, and are also use for 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.2.0 |
 | <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | >=2.21.0 |
 | <a name="requirement_tailscale"></a> [tailscale](#requirement\_tailscale) | >=0.13.6 |
@@ -26,7 +26,7 @@ These examples show how to use the module in your project, and are also use for 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | >=2.21.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 | <a name="provider_tailscale"></a> [tailscale](#provider\_tailscale) | >=0.13.6 |
@@ -39,7 +39,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [digitalocean_droplet.client](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/droplet) | resource |
 | [digitalocean_droplet.server](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/droplet) | resource |
 | [digitalocean_firewall.nomad](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/firewall) | resource |
@@ -62,7 +62,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_agent_size"></a> [agent\_size](#input\_agent\_size) | droplet size for the servers | `string` | `"s-1vcpu-1gb"` | no |
 | <a name="input_agents"></a> [agents](#input\_agents) | Number of Nomad agents | `number` | `7` | no |
 | <a name="input_bastion_device_name"></a> [bastion\_device\_name](#input\_bastion\_device\_name) | Name of the Tailscale device used as bastion to connect to the cluster | `string` | n/a | yes |
@@ -80,7 +80,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_agent_cost"></a> [agent\_cost](#output\_agent\_cost) | Monthly cost of the agents |
 | <a name="output_lb_ip"></a> [lb\_ip](#output\_lb\_ip) | IP of the server loadbalancer |
 | <a name="output_server_cost"></a> [server\_cost](#output\_server\_cost) | Monthly cost of the servers |
