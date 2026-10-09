@@ -13,32 +13,29 @@ jobs:
         example:
           - simple
     name: validate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout code
-        uses: 'actions/checkout@v7'
+        uses: "actions/checkout@v7"
         with:
           fetch-depth: 0
-      - name: Get Consul
-        run: |
-          curl -fSL https://releases.hashicorp.com/consul/1.12.3/consul_1.12.3_linux_amd64.zip \
-          | gunzip -> consul ; chmod u+x consul
+      - name: Dev Env
+        uses: jdx/mise-action@v5
+        with:
+          install: true
       - name: Start Consul dev server
-        run: ./consul agent -server -dev &
-
-      - name: Get Terraform
         run: |
-          curl -fSL https://releases.hashicorp.com/terraform/1.2.3/terraform_1.2.3_linux_amd64.zip \
-          | gunzip -> terraform ; chmod u+x terraform
+          consul agent -server -dev &
+          sleep 3
       - name: Init terraform
-        run: ./terraform -chdir=examples/${{ matrix.example }} init
+        run: terraform -chdir=examples/${{ matrix.example }} init
       - name: Validate terraform
-        run: ./terraform -chdir=examples/${{ matrix.example }} validate
+        run: terraform -chdir=examples/${{ matrix.example }} validate
   release:
     needs:
       - validate
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -47,7 +44,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
       - name: Install dependencies
         run: |
           npm install -D '@semantic-release/commit-analyzer' \
