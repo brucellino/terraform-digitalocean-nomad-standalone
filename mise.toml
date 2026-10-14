@@ -3,6 +3,6 @@
 [settings]
 
 [tools]
-terraform = "1.16.5"
+terraform = "1.16.6"
 consul = "2.0.4"
 prek = "0.5.5"
