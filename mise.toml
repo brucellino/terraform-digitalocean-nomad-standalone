@@ -5,4 +5,4 @@
 [tools]
 terraform = "1.17.2"
 consul = "2.1.0"
-prek = "0.5.11"
+prek = "0.5.12"
